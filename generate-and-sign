@@ -1,0 +1,38 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o noglob
+set -o pipefail
+
+keyfile="id_github"
+pubfile="${keyfile}.pub"
+certfile="${keyfile}-cert.pub"
+response="response.json"
+
+workdir=$(mktemp --directory)
+trap 'rm -rf "$workdir"' EXIT
+cd "$workdir"
+
+ssh-keygen -q -t ed25519 -N '' -f "./${keyfile}"
+pubkey=$(cat "$pubfile")
+
+vault_server_url="${VAULT_SERVER}/v1/${SSH_BACKEND}/sign/${SSH_ROLE}"
+
+curl \
+    --fail \
+    --silent \
+    --show-error \
+    --output "$response" \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --data "{\"public_key\": \"$pubkey\"}" \
+    "$vault_server_url"
+
+jq --exit-status --join-output .data.signed_key "$response" > "$certfile"
+ssh-keygen -L -f "$certfile" > /dev/null
+
+outputs=$(mktemp --tmpdir="$RUNNER_TEMP" --directory ssh-cert-XXX)
+install --mode=0644 "$certfile" "$outputs"
+install --mode=0600 "$keyfile" "$outputs"
+
+echo "::set-output name=cert_path::${outputs}/${certfile}"
+echo "::set-output name=key_path::${outputs}/${keyfile}"

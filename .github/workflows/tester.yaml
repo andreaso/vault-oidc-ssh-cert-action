@@ -1,0 +1,44 @@
+---
+
+name: Self-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  integration:
+    name: Integration test
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+          - ubuntu-20.04
+          - ubuntu-22.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Run self
+        id: ssh_cert
+        uses: ./
+        with:
+          vault_server: https://vault.arrakis.se:8200
+          oidc_backend: github-oidc
+          oidc_role: cert-action-user
+          ssh_backend: arrakis/ssh2
+          ssh_role: cert-action-user
+
+      - name: Examine generated certificate
+        run: ssh-keygen -L -f "${{ steps.ssh_cert.outputs.cert_path }}"

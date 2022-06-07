@@ -1,0 +1,57 @@
+---
+
+name: Get SSH client certificate from Vault
+
+inputs:
+  vault_server:
+    description: URL of the Vault server
+    required: true
+  oidc_backend:
+    description: Path to Vault's GitHub configured JWT/OIDC backend
+    required: true
+  oidc_role:
+    description: Name of the Vault server OIDC role to use
+    required: true
+  ssh_backend:
+    description: Path to Vault's SSH CA backend
+    required: true
+  ssh_role:
+    description: Name of the Vault server SSH certificate role to use
+    required: true
+
+outputs:
+  cert_path:
+    description: Full path to the generated SSH certificate
+    value: ${{ steps.generator.outputs.cert_path }}
+  key_path:
+    description: Full path to the corresponding private SSH key
+    value: ${{ steps.generator.outputs.key_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Authenticate towards Vault
+      uses: hashicorp/vault-action@v2.4.1
+      with:
+        method: jwt
+        jwtTtl: 300
+        url: ${{ inputs.vault_server }}
+        path: ${{ inputs.oidc_backend }}
+        role: ${{ inputs.oidc_role }}
+        exportToken: true
+
+    - name: Generate and sign SSH client certificate
+      id: generator
+      shell: bash
+      run: ${{ github.action_path }}/generate-and-sign
+      env:
+        VAULT_SERVER: ${{ inputs.vault_server }}
+        SSH_BACKEND: ${{ inputs.ssh_backend }}
+        SSH_ROLE: ${{ inputs.ssh_role }}
+        RUNNER_TEMP: ${{ runner.temp }}
+
+    - name: Revoke Vault token
+      shell: bash
+      run: |
+        curl --fail --silent --show-error --header "X-Vault-Token: $VAULT_TOKEN" --data "" "${{ inputs.vault_server }}/v1/auth/token/revoke-self"
+        echo "VAULT_TOKEN=revoked" >> "$GITHUB_ENV"
