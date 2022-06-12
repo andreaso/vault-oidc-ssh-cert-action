@@ -1,6 +1,8 @@
 ---
 
-name: Get SSH client certificate from Vault
+name: Vault OIDC SSH certificate
+description: Use OIDC authentication to get SSH client certificates from Vault
+author: Andreas Olsson
 
 inputs:
   vault_server:
