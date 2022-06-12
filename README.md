@@ -1,8 +1,8 @@
 # Vault OIDC SSH Certificate Action
 
 This action uses [GitHub's OIDC support][1] to authenticate towards a
-HashiCorp Vault instance, and to from it request a (short-lived) SSH
-client certificate.
+HashiCorp Vault instance, and to request a (short-lived) SSH client
+certificate from it.
 
 Under the hood the [hashicorp/vault-action][2] action is used to do
 the actual OIDC authentication.
