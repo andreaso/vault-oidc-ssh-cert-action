@@ -20,6 +20,9 @@ inputs:
   ssh_role:
     description: Name of the Vault server SSH certificate role to use
     required: true
+  jwt_audience:
+    description: Custom JWT audience. Defaults to the vault_server hostname
+    required: false
 
 outputs:
   cert_path:
@@ -32,10 +35,19 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Determine JWT audience
+      id: determine
+      run: python3 "${{ github.action_path }}/url2fqdn.py"
+      shell: bash
+      env:
+        AUDIENCE: ${{ inputs.jwt_audience }}
+        VAULT_URL: ${{ inputs.vault_server }}
+
     - name: Authenticate towards Vault
       uses: hashicorp/vault-action@v2.4.2
       with:
         method: jwt
+        jwtGithubAudience: ${{ steps.determine.outputs.audience }}
         jwtTtl: 300
         url: ${{ inputs.vault_server }}
         path: ${{ inputs.oidc_backend }}
