@@ -22,7 +22,7 @@ jobs:
       - name: Generate SSH client certificate
         if: github.ref == 'refs/heads/main'
         id: ssh_cert
-        uses: andreaso/vault-oidc-ssh-cert-action@v0.1
+        uses: andreaso/vault-oidc-ssh-cert-action@v0.2
         with:
           vault_server: https://vault.example.com:8200
           oidc_backend: github-oidc
@@ -101,7 +101,7 @@ resource "vault_jwt_auth_backend_role" "example" {
   token_max_ttl   = "300"
   token_policies  = [vault_policy.example.name]
   user_claim      = "actor"
-  bound_audiences = ["https://github.com/OWNER"]
+  bound_audiences = ["vault.example.com"]
   bound_claims    = {
     repository = "OWNER/REPO-NAME",
     ref        = "refs/heads/main",
