@@ -38,18 +38,14 @@ runs:
     - name: Determine JWT audience
       id: determine
       run: |
-        import os
         from urllib.parse import urlparse
-        aud = os.environ["AUDIENCE"].strip()
+        aud = "${{ inputs.jwt_audience }}".strip()
         if not aud:
-            url = os.environ["VAULT_URL"]
+            url = "${{ inputs.vault_server }}"
             fqdn = urlparse(url).netloc.split(":")[0]
             aud = fqdn
         print(f"::set-output name=audience::{aud}")
       shell: python
-      env:
-        AUDIENCE: ${{ inputs.jwt_audience }}
-        VAULT_URL: ${{ inputs.vault_server }}
 
     - name: Authenticate towards Vault
       uses: hashicorp/vault-action@v2.4.2
