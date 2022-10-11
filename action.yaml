@@ -38,13 +38,15 @@ runs:
     - name: Determine JWT audience
       id: determine
       run: |
+        import os
         from urllib.parse import urlparse
         aud = "${{ inputs.jwt_audience }}".strip()
         if not aud:
             url = "${{ inputs.vault_server }}"
             fqdn = urlparse(url).netloc.split(":")[0]
             aud = fqdn
-        print(f"::set-output name=audience::{aud}")
+        with open(os.environ["GITHUB_OUTPUT"], "a") as ghof:
+            ghof.write(f"audience={aud}\n")
       shell: python
 
     - name: Authenticate towards Vault

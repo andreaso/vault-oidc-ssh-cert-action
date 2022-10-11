@@ -34,5 +34,5 @@ outputs=$(mktemp --tmpdir="$RUNNER_TEMP" --directory ssh-cert-XXX)
 install --mode=0644 "$certfile" "$outputs"
 install --mode=0600 "$keyfile" "$outputs"
 
-echo "::set-output name=cert_path::${outputs}/${certfile}"
-echo "::set-output name=key_path::${outputs}/${keyfile}"
+echo "cert_path=${outputs}/${certfile}" >> "$GITHUB_OUTPUT"
+echo "key_path=${outputs}/${keyfile}" >> "$GITHUB_OUTPUT"
