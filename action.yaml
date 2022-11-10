@@ -50,7 +50,7 @@ runs:
       shell: python
 
     - name: Authenticate towards Vault
-      uses: hashicorp/vault-action@v2.4.2
+      uses: hashicorp/vault-action@v2.4.3
       with:
         method: jwt
         jwtGithubAudience: ${{ steps.determine.outputs.audience }}
