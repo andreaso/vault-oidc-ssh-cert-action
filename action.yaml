@@ -50,6 +50,7 @@ runs:
       shell: python
 
     - name: Authenticate towards Vault
+      id: vault_auth
       uses: hashicorp/vault-action@v2.7.0
       with:
         method: jwt
@@ -58,7 +59,7 @@ runs:
         url: ${{ inputs.vault_server }}
         path: ${{ inputs.oidc_backend }}
         role: ${{ inputs.oidc_role }}
-        exportToken: true
+        outputToken: true
 
     - name: Generate and sign SSH client certificate
       id: generator
@@ -66,6 +67,7 @@ runs:
       run: ${{ github.action_path }}/generate-and-sign
       env:
         VAULT_SERVER: ${{ inputs.vault_server }}
+        VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}
         SSH_BACKEND: ${{ inputs.ssh_backend }}
         SSH_ROLE: ${{ inputs.ssh_role }}
         RUNNER_TEMP: ${{ runner.temp }}
@@ -73,5 +75,4 @@ runs:
     - name: Revoke Vault token
       shell: bash
       run: |
-        curl --fail --silent --show-error --header "X-Vault-Token: $VAULT_TOKEN" --data "" "${{ inputs.vault_server }}/v1/auth/token/revoke-self"
-        echo "VAULT_TOKEN=revoked" >> "$GITHUB_ENV"
+        curl --fail --silent --show-error --header "X-Vault-Token: ${{ steps.vault_auth.outputs.vault_token }}" --data "" "${{ inputs.vault_server }}/v1/auth/token/revoke-self"
