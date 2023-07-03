@@ -73,5 +73,6 @@ runs:
         RUNNER_TEMP: ${{ runner.temp }}
 
     - name: Revoke Vault token
+      if: success() || failure()
       shell: bash
       run: 'curl --fail --silent --show-error --header "X-Vault-Token: ${{ steps.vault_auth.outputs.vault_token }}" --data "" "${{ inputs.vault_server }}/v1/auth/token/revoke-self"'
