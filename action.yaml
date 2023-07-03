@@ -51,7 +51,7 @@ runs:
 
     - name: Authenticate towards Vault
       id: vault_auth
-      uses: hashicorp/vault-action@v2.7.0
+      uses: hashicorp/vault-action@v2.7.1
       with:
         method: jwt
         jwtGithubAudience: ${{ steps.determine.outputs.audience }}
