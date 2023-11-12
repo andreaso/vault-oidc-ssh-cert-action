@@ -70,7 +70,7 @@ runs:
         VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}
         SSH_BACKEND: ${{ inputs.ssh_backend }}
         SSH_ROLE: ${{ inputs.ssh_role }}
-        RUNNER_TEMP: ${{ runner.temp }}
+        TMPDIR: ${{ runner.temp }}
 
     - name: Revoke Vault token
       if: success() || failure()

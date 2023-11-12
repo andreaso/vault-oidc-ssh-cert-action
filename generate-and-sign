@@ -30,7 +30,7 @@ curl \
 jq --exit-status --join-output .data.signed_key "$response" > "$certfile"
 ssh-keygen -L -f "$certfile" > /dev/null
 
-outputs=$(mktemp --tmpdir="$RUNNER_TEMP" --directory ssh-cert-XXX)
+outputs=$(mktemp --tmpdir --directory ssh-cert-XXX)
 install --mode=0644 "$certfile" "$outputs"
 install --mode=0600 "$keyfile" "$outputs"
 
