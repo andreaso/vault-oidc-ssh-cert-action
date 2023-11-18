@@ -1,0 +1,33 @@
+#!/bin/bash
+set -o errexit
+set -o nounset
+set -o noglob
+set -o pipefail
+
+github_response=$(mktemp)
+vault_response=$(mktemp)
+trap 'rm "$github_response" "$vault_response"' EXIT
+
+curl \
+    --fail \
+    --silent \
+    --show-error \
+    --connect-timeout 10 \
+    --output "$github_response" \
+    --header "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+    "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${AUDIENCE}"
+
+github_jwt=$(jq --exit-status --raw-output .value "$github_response")
+
+curl \
+    --fail \
+    --silent \
+    --show-error \
+    --connect-timeout 10 \
+    --output "$vault_response" \
+    --data '{"jwt": "'"$github_jwt"'", "role": "'"$ROLE"'"}' \
+    "${VAULT_SERVER}/v1/auth/${BACKEND}/login"
+
+vault_token=$(jq --exit-status --raw-output .auth.client_token "$vault_response")
+echo "::add-mask::$vault_token"
+echo "vault_token=$vault_token" >> "$GITHUB_OUTPUT"

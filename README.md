@@ -4,9 +4,6 @@ This action uses [GitHub's OIDC support][1] to authenticate towards a
 HashiCorp Vault instance, and to request a (short-lived) SSH client
 certificate from it.
 
-Under the hood the [hashicorp/vault-action][2] action is used to do
-the actual OIDC authentication.
-
 
 ## Example Usage
 
@@ -113,4 +110,3 @@ resource "vault_jwt_auth_backend_role" "example" {
 
 
 [1]: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
-[2]: https://github.com/hashicorp/vault-action

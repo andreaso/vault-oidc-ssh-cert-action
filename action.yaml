@@ -52,17 +52,16 @@ runs:
         JWT_AUDIENCE: ${{ inputs.jwt_audience }}
         VAULT_SERVER: ${{ inputs.vault_server }}
 
-    - name: Authenticate towards Vault
+    - name: Use GitHub OIDC to authenticate towards Vault
       id: vault_auth
-      uses: hashicorp/vault-action@v2.7.4
-      with:
-        method: jwt
-        jwtGithubAudience: ${{ steps.determine.outputs.audience }}
-        jwtTtl: 300
-        url: ${{ inputs.vault_server }}
-        path: ${{ inputs.oidc_backend }}
-        role: ${{ inputs.oidc_role }}
-        outputToken: true
+      shell: bash
+      run: "${ACTION_PATH}/github-vault-auth"
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        AUDIENCE: ${{ steps.determine.outputs.audience }}
+        BACKEND: ${{ inputs.oidc_backend }}
+        ROLE: ${{ inputs.oidc_role }}
+        VAULT_SERVER: ${{ inputs.vault_server }}
 
     - name: Generate and sign SSH client certificate
       id: generator
