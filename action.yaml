@@ -77,7 +77,7 @@ runs:
         TMPDIR: ${{ runner.temp }}
 
     - name: Revoke Vault token
-      if: success() || failure()
+      if: success() || steps.generator.conclusion == 'failure'
       shell: bash
       run: |
         curl --fail --silent --show-error --header "X-Vault-Token: ${VAULT_TOKEN}" --data "" "${VAULT_SERVER}/v1/auth/token/revoke-self"
