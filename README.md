@@ -33,9 +33,11 @@ jobs:
       - name: Deploy site
         if: github.ref == 'refs/heads/main'
         run: >
-          rsync -e "ssh -i '${{ steps.ssh_cert.outputs.key_path }}'"
+          rsync -e "ssh -i '$SSH_CERT_PATH'"
           --verbose --recursive --delete-after --perms --chmod=D755,F644
           build/ deployer@site.example.net:/var/www/site/
+        env:
+          SSH_CERT_PATH: ${{ steps.ssh_cert.outputs.key_path }}
 ```
 
 Do note that all client certification configuration is expected to

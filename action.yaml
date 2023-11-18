@@ -40,14 +40,17 @@ runs:
       run: |
         import os
         from urllib.parse import urlparse
-        aud = "${{ inputs.jwt_audience }}".strip()
+        aud = os.environ["JWT_AUDIENCE"].strip()
         if not aud:
-            url = "${{ inputs.vault_server }}"
+            url = os.environ["VAULT_SERVER"]
             fqdn = urlparse(url).netloc.split(":")[0]
             aud = fqdn
         with open(os.environ["GITHUB_OUTPUT"], "a") as ghof:
             ghof.write(f"audience={aud}\n")
       shell: python
+      env:
+        JWT_AUDIENCE: ${{ inputs.jwt_audience }}
+        VAULT_SERVER: ${{ inputs.vault_server }}
 
     - name: Authenticate towards Vault
       id: vault_auth
@@ -64,8 +67,9 @@ runs:
     - name: Generate and sign SSH client certificate
       id: generator
       shell: bash
-      run: ${{ github.action_path }}/generate-and-sign
+      run: "${ACTION_PATH}/generate-and-sign"
       env:
+        ACTION_PATH: ${{ github.action_path }}
         VAULT_SERVER: ${{ inputs.vault_server }}
         VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}
         SSH_BACKEND: ${{ inputs.ssh_backend }}
@@ -75,4 +79,8 @@ runs:
     - name: Revoke Vault token
       if: success() || failure()
       shell: bash
-      run: 'curl --fail --silent --show-error --header "X-Vault-Token: ${{ steps.vault_auth.outputs.vault_token }}" --data "" "${{ inputs.vault_server }}/v1/auth/token/revoke-self"'
+      run: |
+        curl --fail --silent --show-error --header "X-Vault-Token: ${VAULT_TOKEN}" --data "" "${VAULT_SERVER}/v1/auth/token/revoke-self"
+      env:
+        VAULT_SERVER: ${{ inputs.vault_server }}
+        VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}
