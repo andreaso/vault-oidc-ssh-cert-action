@@ -79,7 +79,7 @@ runs:
       if: success() || steps.generator.conclusion == 'failure'
       shell: bash
       run: |
-        curl --fail --silent --show-error --header "X-Vault-Token: ${VAULT_TOKEN}" --data "" "${VAULT_SERVER}/v1/auth/token/revoke-self"
+        curl --fail --silent --show-error --header "X-Vault-Token: ${VAULT_TOKEN}" --data "" "${VAULT_SERVER%/}/v1/auth/token/revoke-self"
       env:
         VAULT_SERVER: ${{ inputs.vault_server }}
         VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}

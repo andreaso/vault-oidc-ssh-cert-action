@@ -26,7 +26,7 @@ curl \
     --connect-timeout 10 \
     --output "$vault_response" \
     --data '{"jwt": "'"$github_jwt"'", "role": "'"$ROLE"'"}' \
-    "${VAULT_SERVER}/v1/auth/${BACKEND}/login"
+    "${VAULT_SERVER%/}/v1/auth/${BACKEND}/login"
 
 vault_token=$(jq --exit-status --raw-output .auth.client_token "$vault_response")
 echo "::add-mask::$vault_token"

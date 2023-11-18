@@ -16,7 +16,7 @@ cd "$workdir"
 ssh-keygen -q -t ed25519 -N '' -f "./${keyfile}"
 pubkey=$(cat "$pubfile")
 
-vault_server_url="${VAULT_SERVER}/v1/${SSH_BACKEND}/sign/${SSH_ROLE}"
+vault_server_url="${VAULT_SERVER%/}/v1/${SSH_BACKEND}/sign/${SSH_ROLE}"
 
 curl \
     --fail \
