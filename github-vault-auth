@@ -12,6 +12,7 @@ curl \
     --fail \
     --silent \
     --show-error \
+    --tlsv1.2 \
     --connect-timeout 10 \
     --output "$github_response" \
     --header "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
@@ -23,6 +24,7 @@ curl \
     --fail \
     --silent \
     --show-error \
+    --tlsv1.3 \
     --connect-timeout 10 \
     --output "$vault_response" \
     --data '{"jwt": "'"$github_jwt"'", "role": "'"$ROLE"'"}' \

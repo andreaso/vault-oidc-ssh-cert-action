@@ -22,6 +22,7 @@ curl \
     --fail \
     --silent \
     --show-error \
+    --tlsv1.3 \
     --output "$response" \
     --header "X-Vault-Token: $VAULT_TOKEN" \
     --data "{\"public_key\": \"$pubkey\"}" \
