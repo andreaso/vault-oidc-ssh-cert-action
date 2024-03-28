@@ -19,12 +19,12 @@ jobs:
       - name: Generate SSH client certificate
         if: github.ref == 'refs/heads/main'
         id: ssh_cert
-        uses: andreaso/vault-oidc-ssh-cert-action@v0.9
+        uses: andreaso/vault-oidc-ssh-cert-action@v0.10
         with:
           vault_server: https://vault.example.com:8200
-          oidc_backend: github-oidc
+          oidc_backend_path: github-oidc
           oidc_role: example-user
-          ssh_backend: ssh-client-ca
+          ssh_backend_path: ssh-client-ca
           ssh_role: github-actions-example
 
       - name: Deploy site

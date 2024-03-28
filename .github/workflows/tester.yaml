@@ -34,9 +34,9 @@ jobs:
         uses: ./
         with:
           vault_server: https://vault.arrakis.se:8200
-          oidc_backend: github-oidc
+          oidc_backend_path: github-oidc
           oidc_role: cert-action-user
-          ssh_backend: arrakis/ssh2
+          ssh_backend_path: arrakis/ssh2
           ssh_role: cert-action-cert
 
       - name: Examine generated certificate
@@ -48,9 +48,9 @@ jobs:
         with:
           vault_server: https://vault.arrakis.se:8200
           jwt_audience: a-test-audience
-          oidc_backend: github-oidc
+          oidc_backend_path: github-oidc
           oidc_role: cert-action-at-user
-          ssh_backend: arrakis/ssh2
+          ssh_backend_path: arrakis/ssh2
           ssh_role: cert-action-at-cert
 
       - name: Examine second generated certificate
