@@ -108,5 +108,30 @@ resource "vault_jwt_auth_backend_role" "example" {
 }
 ```
 
+```terraform
+output "ssh_ca" {
+  value = vault_ssh_secret_backend_ca.ssh_ca.public_key
+}
+```
+
+### OpenSSH
+
+```ssh-config
+# /etc/ssh/sshd_config
+# ...
+TrustedUserCAKeys /etc/ssh/sshd_user_ca.pub
+AuthorizedPrincipalsFile /etc/ssh/user_principals/%u
+```
+
+```text
+# /etc/ssh/sshd_user_ca.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...
+```
+
+```text
+# /etc/ssh/user_principals/deployer
+github-deploy@example.com
+```
+
 
 [1]: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
