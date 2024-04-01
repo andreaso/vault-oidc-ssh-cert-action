@@ -12,12 +12,44 @@ on:
 
 permissions:
   contents: read
-  statuses: write
 
 jobs:
-  lint:
+  python:
+    name: Python
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+          - ubuntu-22.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python virtualenv
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --upgrade pip setuptools
+          .venv/bin/pip install ruff mypy types-requests
+
+      - name: Check ruff formating
+        run: .venv/bin/ruff format --diff vault_oidc_ssh_cert_action.py
+
+      - name: Check ruff linting
+        run: .venv/bin/ruff check vault_oidc_ssh_cert_action.py
+
+      - name: Check type hints
+        run: .venv/bin/mypy --strict vault_oidc_ssh_cert_action.py
+
+  super:
     name: Super-Linter
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      statuses: write
 
     steps:
       - name: Checkout
@@ -29,6 +61,10 @@ jobs:
         uses: super-linter/super-linter/slim@v6
         env:
           VALIDATE_ALL_CODEBASE: true
-          VALIDATE_SHELL_SHFMT: false
+          VALIDATE_PYTHON_BLACK: false
+          VALIDATE_PYTHON_FLAKE8: false
+          VALIDATE_PYTHON_ISORT: false
+          VALIDATE_PYTHON_MYPY: false
+          VALIDATE_PYTHON_PYLINT: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

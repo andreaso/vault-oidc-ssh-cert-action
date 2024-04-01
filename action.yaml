@@ -27,59 +27,26 @@ inputs:
 outputs:
   cert_path:
     description: Full path to the generated SSH certificate
-    value: ${{ steps.generator.outputs.cert_path }}
+    value: ${{ steps.run_action.outputs.cert_path }}
   key_path:
     description: Full path to the corresponding private SSH key
-    value: ${{ steps.generator.outputs.key_path }}
+    value: ${{ steps.run_action.outputs.key_path }}
 
 runs:
   using: composite
   steps:
-    - name: Determine JWT audience
-      id: determine
-      run: |
-        import os
-        from urllib.parse import urlparse
-        aud = os.environ["JWT_AUDIENCE"].strip()
-        if not aud:
-            url = os.environ["VAULT_SERVER"]
-            fqdn = urlparse(url).netloc.split(":")[0]
-            aud = fqdn
-        with open(os.environ["GITHUB_OUTPUT"], "a") as ghof:
-            ghof.write(f"audience={aud}\n")
+    - name: Run Action
+      id: run_action
       shell: python
-      env:
-        JWT_AUDIENCE: ${{ inputs.jwt_audience }}
-        VAULT_SERVER: ${{ inputs.vault_server }}
-
-    - name: Use GitHub OIDC to authenticate towards Vault
-      id: vault_auth
-      shell: bash
-      run: "${ACTION_PATH}/github-vault-auth"
-      env:
-        ACTION_PATH: ${{ github.action_path }}
-        AUDIENCE: ${{ steps.determine.outputs.audience }}
-        BACKEND: ${{ inputs.oidc_backend_path }}
-        ROLE: ${{ inputs.oidc_role }}
-        VAULT_SERVER: ${{ inputs.vault_server }}
-
-    - name: Generate and sign SSH client certificate
-      id: generator
-      shell: bash
-      run: "${ACTION_PATH}/generate-and-sign"
-      env:
-        ACTION_PATH: ${{ github.action_path }}
-        VAULT_SERVER: ${{ inputs.vault_server }}
-        VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}
-        SSH_BACKEND: ${{ inputs.ssh_backend_path }}
-        SSH_ROLE: ${{ inputs.ssh_role }}
-        TMPDIR: ${{ runner.temp }}
-
-    - name: Revoke Vault token
-      if: success() || steps.generator.conclusion == 'failure'
-      shell: bash
       run: |
-        curl --fail --silent --show-error --tlsv1.3 --header "X-Vault-Token: ${VAULT_TOKEN}" --data "" "${VAULT_SERVER%/}/v1/auth/token/revoke-self"
+        import vault_oidc_ssh_cert_action
+        vault_oidc_ssh_cert_action.run()
       env:
+        PYTHONPATH: ${{ github.action_path }}
+        JWT_AUDIENCE: ${{ inputs.jwt_audience }}
+        OIDC_BACKEND_PATH: ${{ inputs.oidc_backend_path }}
+        OIDC_ROLE: ${{ inputs.oidc_role }}
+        SSH_BACKEND_PATH: ${{ inputs.ssh_backend_path }}
+        SSH_ROLE: ${{ inputs.ssh_role }}
         VAULT_SERVER: ${{ inputs.vault_server }}
-        VAULT_TOKEN: ${{ steps.vault_auth.outputs.vault_token }}
+        TMPDIR: ${{ runner.temp }}
