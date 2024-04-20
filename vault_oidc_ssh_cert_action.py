@@ -55,7 +55,13 @@ def _determine_audience(input_audience: str, vault_server: str) -> str:
         return input_audience
 
     vault_fqdn = urllib.parse.urlparse(vault_server).netloc.split(":")[0]
-    return vault_fqdn
+    if vault_fqdn:
+        return vault_fqdn
+
+    title = "Default JWT audience error"
+    message = "Failed to extract a default JWT audience from the vault_server input."
+    _set_error_message(title, message)
+    raise VoscaError(title)
 
 
 def _issue_github_jwt(jwt_aud: str) -> str:
