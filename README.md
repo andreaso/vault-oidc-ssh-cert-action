@@ -22,6 +22,7 @@ jobs:
         uses: andreaso/vault-oidc-ssh-cert-action@v0.11
         with:
           vault_server: https://vault.example.com:8200
+          jwt_audience: vault.example.com
           oidc_backend_path: github-oidc
           oidc_role: example-user
           ssh_backend_path: ssh-client-ca
