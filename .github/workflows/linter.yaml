@@ -34,11 +34,19 @@ jobs:
           .venv/bin/pip install --upgrade pip setuptools
           .venv/bin/pip install ruff mypy types-requests
 
+      - name: Detect Python version
+        id: detect
+        run: echo "pyver=$(python3 -c 'import sys; print(f"py{sys.version_info.major}{sys.version_info.minor}")')" >> "$GITHUB_OUTPUT"
+
       - name: Check ruff formating
-        run: .venv/bin/ruff format --diff vault_oidc_ssh_cert_action.py
+        run: .venv/bin/ruff format --target-version "$PYVER" --diff vault_oidc_ssh_cert_action.py
+        env:
+          PYVER: ${{ steps.detect.outputs.pyver }}
 
       - name: Check ruff linting
-        run: .venv/bin/ruff check vault_oidc_ssh_cert_action.py
+        run: .venv/bin/ruff check --target-version "$PYVER" vault_oidc_ssh_cert_action.py
+        env:
+          PYVER: ${{ steps.detect.outputs.pyver }}
 
       - name: Check type hints
         run: .venv/bin/mypy --strict vault_oidc_ssh_cert_action.py
