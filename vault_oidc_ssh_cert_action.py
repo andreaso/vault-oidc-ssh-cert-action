@@ -2,7 +2,6 @@ import os
 import subprocess
 import tempfile
 import urllib.parse
-from typing import List, Tuple
 
 import requests
 
@@ -36,7 +35,7 @@ def _check_inputs() -> None:
         "ssh_role",
         "vault_server",
     ]
-    missing_inputs: List[str] = []
+    missing_inputs: list[str] = []
     for input in required_inputs:
         if not os.environ.get(input.upper(), "").strip():
             missing_inputs.append(input)
@@ -140,7 +139,7 @@ def _issue_ssh_cert(
 
 def _generate_and_sign(
     vault_server: str, vault_token: str, ssh_backend: str, ssh_role: str
-) -> Tuple[str, str]:
+) -> tuple[str, str]:
     key_fname = "id_github"
     cert_fname = f"{key_fname}-cert.pub"
 
