@@ -52,32 +52,19 @@ jobs:
       - name: Check type hints
         run: .venv/bin/mypy --strict vault_oidc_ssh_cert_action.py
 
-  super:
-    name: Super-Linter
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      statuses: write
+  secondary:
+    name: Secondary linting
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Lint
-        uses: super-linter/super-linter/slim@v7
-        env:
-          VALIDATE_ALL_CODEBASE: true
-          VALIDATE_MARKDOWN_PRETTIER: false
-          VALIDATE_PYTHON_BLACK: false
-          VALIDATE_PYTHON_FLAKE8: false
-          VALIDATE_PYTHON_ISORT: false
-          VALIDATE_PYTHON_MYPY: false
-          VALIDATE_PYTHON_PYINK: false
-          VALIDATE_PYTHON_PYLINT: false
-          VALIDATE_PYTHON_RUFF: false
-          VALIDATE_YAML_PRETTIER: false
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Secondary Linters
+        uses: andreaso/setup-secondary-linters@main
+
+      - name: Lint GitHub Actions workflows
+        run: actionlint
+
+      - name: Markdown lint README
+        run: markdownlint --disable MD012 -- README.md
