@@ -1,0 +1,30 @@
+---
+
+name: vosca
+services:
+  vault-setup:
+    image: hashicorp/vault:latest
+    environment:
+      GITHUB_REPOSITORY: $GITHUB_REPOSITORY
+      VAULT_TOKEN: BatteryStaple
+      VAULT_ADDR: http://vault-server:8200
+    volumes:
+      - ./setup-server:/mnt/setup-server
+    entrypoint: /mnt/setup-server
+    depends_on:
+      vault-server:
+        condition: service_healthy
+
+  vault-server:
+    cap_add:
+      - IPC_LOCK
+    image: hashicorp/vault:latest
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: BatteryStaple
+    ports:
+      - 127.0.0.1:8200:8200
+    healthcheck:
+      test: ["CMD", "/usr/bin/nc", "-z", "127.0.0.1", "8200"]
+      interval: 1s
+      timeout: 1s
+      retries: 5

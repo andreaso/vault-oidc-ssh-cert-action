@@ -1,0 +1,58 @@
+#!/bin/ash
+# shellcheck shell=dash
+
+set -o errexit
+set -o nounset
+set -o noglob
+set -o pipefail
+
+: "${GITHUB_REPOSITORY:=placeholder}"
+
+JWT_PATH="github-oidc"
+SSH_PATH="arrakis/ssh2"
+CERT_ROLE="cert-action-cert"
+SIGN_POLICY="sign-cert"
+
+vault auth enable -path="$JWT_PATH" jwt
+vault write "auth/${JWT_PATH}/config" \
+      oidc_discovery_url="https://token.actions.githubusercontent.com" \
+      bound_issuer="https://token.actions.githubusercontent.com"
+
+vault secrets enable -path="$SSH_PATH" ssh
+vault write "${SSH_PATH}/config/ca" key_type=ed25519 generate_signing_key=true
+
+vault write "${SSH_PATH}/roles/${CERT_ROLE}" \
+      key_type=ca \
+      allow_user_certificates=true \
+      allowed_users=vault-oidc-ssh-cert-action@andreaso.github.io \
+      default_user=vault-oidc-ssh-cert-action@andreaso.github.io \
+      allow_host_certificates=false
+
+cat <<EOF |
+path "${SSH_PATH}/sign/${CERT_ROLE}" {
+  capabilities = ["update"]
+}
+EOF
+vault policy write "$SIGN_POLICY" -
+
+cat <<EOF |
+{
+  "role_type": "jwt",
+  "user_claim": "actor",
+  "bound_audiences": ["127.0.0.1"],
+  "bound_claims": {"repository": "$GITHUB_REPOSITORY"},
+  "token_policies": "$SIGN_POLICY"
+}
+EOF
+vault write "auth/${JWT_PATH}/role/cert-action-user" -
+
+cat <<EOF |
+{
+  "role_type": "jwt",
+  "user_claim": "actor",
+  "bound_audiences": ["a-test-audience"],
+  "bound_claims": {"repository": "$GITHUB_REPOSITORY"},
+  "token_policies": "$SIGN_POLICY"
+}
+EOF
+vault write "auth/${JWT_PATH}/role/cert-action-at-user" -
