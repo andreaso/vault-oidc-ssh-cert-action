@@ -1,27 +1,27 @@
 ---
 
-name: vosca
+name: bosca
 services:
-  vault-setup:
-    image: hashicorp/vault:latest
+  bao-setup:
+    image: openbao/openbao:latest
     environment:
       GITHUB_REPOSITORY: $GITHUB_REPOSITORY
-      SETUP_COMMAND: vault
-      VAULT_TOKEN: BatteryStaple
-      VAULT_ADDR: http://vault-server:8200
+      SETUP_COMMAND: bao
+      BAO_TOKEN: BatteryStaple
+      BAO_ADDR: http://bao-server:8200
     volumes:
       - ./setup-server:/mnt/setup-server
     entrypoint: /mnt/setup-server
     depends_on:
-      vault-server:
+      bao-server:
         condition: service_healthy
 
-  vault-server:
+  bao-server:
     cap_add:
       - IPC_LOCK
-    image: hashicorp/vault:latest
+    image: openbao/openbao:latest
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: BatteryStaple
+      BAO_DEV_ROOT_TOKEN_ID: BatteryStaple
     ports:
       - 127.0.0.1:8200:8200
     healthcheck:

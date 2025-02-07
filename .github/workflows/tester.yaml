@@ -21,21 +21,30 @@ jobs:
 
     strategy:
       matrix:
+        backend:
+          - vault
         os:
           - ubuntu-22.04
           - ubuntu-22.04-arm
           - ubuntu-24.04
           - ubuntu-24.04-arm
+        include:
+          - backend: bao
+            os: ubuntu-24.04
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Bring up Vault server
-        run: docker compose -f .github/integration/vault-compose.yaml up --wait --detach vault-server
+      - name: Bring up server
+        run: docker compose -f ".github/integration/${BACKEND}-compose.yaml" up --wait --detach "${BACKEND}-server"
+        env:
+          BACKEND: ${{ matrix.backend }}
 
-      - name: Configure Vault server
-        run: docker compose -f .github/integration/vault-compose.yaml run --no-deps vault-setup
+      - name: Configure server
+        run: docker compose -f ".github/integration/${BACKEND}-compose.yaml" run --no-deps "${BACKEND}-setup"
+        env:
+          BACKEND: ${{ matrix.backend }}
 
       - name: Run self
         id: ssh_cert

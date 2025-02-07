@@ -13,15 +13,15 @@ SSH_PATH="arrakis/ssh2"
 CERT_ROLE="cert-action-cert"
 SIGN_POLICY="sign-cert"
 
-vault auth enable -path="$JWT_PATH" jwt
-vault write "auth/${JWT_PATH}/config" \
+"$SETUP_COMMAND" auth enable -path="$JWT_PATH" jwt
+"$SETUP_COMMAND" write "auth/${JWT_PATH}/config" \
       oidc_discovery_url="https://token.actions.githubusercontent.com" \
       bound_issuer="https://token.actions.githubusercontent.com"
 
-vault secrets enable -path="$SSH_PATH" ssh
-vault write "${SSH_PATH}/config/ca" key_type=ed25519 generate_signing_key=true
+"$SETUP_COMMAND" secrets enable -path="$SSH_PATH" ssh
+"$SETUP_COMMAND" write "${SSH_PATH}/config/ca" key_type=ed25519 generate_signing_key=true
 
-vault write "${SSH_PATH}/roles/${CERT_ROLE}" \
+"$SETUP_COMMAND" write "${SSH_PATH}/roles/${CERT_ROLE}" \
       key_type=ca \
       allow_user_certificates=true \
       allowed_users=vault-oidc-ssh-cert-action@andreaso.github.io \
@@ -33,7 +33,7 @@ path "${SSH_PATH}/sign/${CERT_ROLE}" {
   capabilities = ["update"]
 }
 EOF
-vault policy write "$SIGN_POLICY" -
+"$SETUP_COMMAND" policy write "$SIGN_POLICY" -
 
 cat <<EOF |
 {
@@ -44,7 +44,7 @@ cat <<EOF |
   "token_policies": "$SIGN_POLICY"
 }
 EOF
-vault write "auth/${JWT_PATH}/role/cert-action-user" -
+"$SETUP_COMMAND" write "auth/${JWT_PATH}/role/cert-action-user" -
 
 cat <<EOF |
 {
@@ -55,4 +55,4 @@ cat <<EOF |
   "token_policies": "$SIGN_POLICY"
 }
 EOF
-vault write "auth/${JWT_PATH}/role/cert-action-at-user" -
+"$SETUP_COMMAND" write "auth/${JWT_PATH}/role/cert-action-at-user" -

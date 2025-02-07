@@ -1,7 +1,7 @@
 ---
 
 name: Vault OIDC SSH certificate
-description: Use OIDC authentication to get SSH client certificates from Vault
+description: Use OIDC authentication to get SSH client certificates from Vault alt. OpenBao
 author: Andreas Olsson
 
 inputs:

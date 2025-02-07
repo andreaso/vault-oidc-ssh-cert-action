@@ -1,8 +1,8 @@
 # Vault OIDC SSH Certificate Action
 
 This action uses [GitHub's OIDC support][1] to authenticate towards a
-HashiCorp Vault instance, and to request a (short-lived) SSH client
-certificate from it.
+HashiCorp Vault instance or an [OpenBao][2] instance, and to request a
+(short-lived) SSH client certificate from it.
 
 
 ## Example Usage
@@ -136,3 +136,4 @@ github-deploy@example.com
 
 
 [1]: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
+[2]: https://openbao.org/
