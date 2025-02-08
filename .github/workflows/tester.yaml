@@ -51,8 +51,8 @@ jobs:
         uses: ./
         with:
           vault_server: http://127.0.0.1:8200
-          oidc_backend_path: github-oidc
-          oidc_role: cert-action-user
+          jwt_oidc_backend_path: github-oidc
+          jwt_oidc_role: cert-action-user
           ssh_backend_path: arrakis/ssh2
           ssh_role: cert-action-cert
 
@@ -65,8 +65,8 @@ jobs:
         with:
           vault_server: http://127.0.0.1:8200
           jwt_audience: a-test-audience
-          oidc_backend_path: github-oidc
-          oidc_role: cert-action-at-user
+          jwt_oidc_backend_path: github-oidc
+          jwt_oidc_role: cert-action-at-user
           ssh_backend_path: arrakis/ssh2
           ssh_role: cert-action-cert
 

@@ -8,11 +8,11 @@ inputs:
   vault_server:
     description: URL of the Vault server
     required: true
-  oidc_backend_path:
-    description: Path to Vault's GitHub configured JWT/OIDC backend
+  jwt_oidc_backend_path:
+    description: Path to Vault's GitHub configured JWT OIDC backend
     required: true
-  oidc_role:
-    description: Name of the Vault server OIDC role to use
+  jwt_oidc_role:
+    description: Name of the Vault server JWT OIDC role to use
     required: true
   ssh_backend_path:
     description: Path to Vault's SSH CA backend
@@ -44,8 +44,8 @@ runs:
       env:
         PYTHONPATH: ${{ github.action_path }}
         JWT_AUDIENCE: ${{ inputs.jwt_audience }}
-        OIDC_BACKEND_PATH: ${{ inputs.oidc_backend_path }}
-        OIDC_ROLE: ${{ inputs.oidc_role }}
+        JWT_OIDC_BACKEND_PATH: ${{ inputs.jwt_oidc_backend_path }}
+        JWT_OIDC_ROLE: ${{ inputs.jwt_oidc_role }}
         SSH_BACKEND_PATH: ${{ inputs.ssh_backend_path }}
         SSH_ROLE: ${{ inputs.ssh_role }}
         VAULT_SERVER: ${{ inputs.vault_server }}

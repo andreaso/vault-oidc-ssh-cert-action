@@ -29,8 +29,8 @@ def _set_step_output(name: str, value: str) -> None:
 
 def _check_inputs() -> None:
     required_inputs = [
-        "oidc_backend_path",
-        "oidc_role",
+        "jwt_oidc_backend_path",
+        "jwt_oidc_role",
         "ssh_backend_path",
         "ssh_role",
         "vault_server",
@@ -98,10 +98,10 @@ def _issue_github_jwt(jwt_aud: str) -> str:
 
 
 def _issue_vault_token(
-    vault_server: str, oidc_backend: str, oidc_role: str, jwt_token: str
+    vault_server: str, oidc_backend: str, jwt_oidc_role: str, jwt_token: str
 ) -> str:
     login_url = f"{vault_server}/v1/auth/{oidc_backend}/login"
-    payload = {"jwt": jwt_token, "role": oidc_role}
+    payload = {"jwt": jwt_token, "role": jwt_oidc_role}
 
     try:
         response = requests.post(login_url, data=payload, timeout=10)
@@ -189,8 +189,8 @@ def run() -> None:
     _check_inputs()
 
     input_audience = os.environ["JWT_AUDIENCE"].strip()
-    oidc_role = os.environ["OIDC_ROLE"].strip()
-    oidc_backend = os.environ["OIDC_BACKEND_PATH"].strip("/ ")
+    jwt_oidc_role = os.environ["JWT_OIDC_ROLE"].strip()
+    oidc_backend = os.environ["JWT_OIDC_BACKEND_PATH"].strip("/ ")
     ssh_role = os.environ["SSH_ROLE"].strip()
     ssh_backend = os.environ["SSH_BACKEND_PATH"].strip("/ ")
     vault_server = os.environ["VAULT_SERVER"].strip("/ ")
@@ -198,7 +198,7 @@ def run() -> None:
     jwt_aud: str = _determine_audience(input_audience, vault_server)
     jwt_token: str = _issue_github_jwt(jwt_aud)
     vault_token: str = _issue_vault_token(
-        vault_server, oidc_backend, oidc_role, jwt_token
+        vault_server, oidc_backend, jwt_oidc_role, jwt_token
     )
 
     try:
