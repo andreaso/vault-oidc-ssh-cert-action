@@ -201,13 +201,15 @@ def run() -> None:
         vault_server, oidc_backend, oidc_role, jwt_token
     )
 
-    cert_path: str
-    key_path: str
-    cert_path, key_path = _generate_and_sign(
-        vault_server, vault_token, ssh_backend, ssh_role
-    )
+    try:
+        cert_path: str
+        key_path: str
+        cert_path, key_path = _generate_and_sign(
+            vault_server, vault_token, ssh_backend, ssh_role
+        )
 
-    _set_step_output("cert_path", cert_path)
-    _set_step_output("key_path", key_path)
+        _set_step_output("cert_path", cert_path)
+        _set_step_output("key_path", key_path)
 
-    _revoke_token(vault_server, vault_token)
+    finally:
+        _revoke_token(vault_server, vault_token)
