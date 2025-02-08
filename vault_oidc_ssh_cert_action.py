@@ -94,6 +94,7 @@ def _issue_github_jwt(jwt_aud: str) -> str:
         raise VoscaError(title) from request_error
 
     jwt_token: str = response.json()["value"]
+    _mask_value(jwt_token)
     return jwt_token
 
 
