@@ -60,7 +60,9 @@ resource "vault_mount" "ssh_ca" {
 }
 
 resource "vault_ssh_secret_backend_ca" "ssh_ca" {
-  backend = vault_mount.ssh_ca.path
+  backend              = vault_mount.ssh_ca.path
+  key_type             = "ed25519"
+  generate_signing_key = true
 }
 ```
 
