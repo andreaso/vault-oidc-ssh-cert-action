@@ -19,7 +19,7 @@ jobs:
       - name: Generate SSH client certificate
         if: github.ref == 'refs/heads/main'
         id: ssh_cert
-        uses: andreaso/vault-oidc-ssh-cert-action@v0.12
+        uses: andreaso/vault-oidc-ssh-cert-action@v1
         with:
           vault_server: https://vault.example.com:8200
           jwt_audience: vault.example.com
