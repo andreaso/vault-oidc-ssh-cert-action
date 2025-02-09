@@ -1,6 +1,6 @@
 ---
 
-name: Vault OIDC SSH certificate
+name: Vault OIDC SSH client certs
 description: Use OIDC authentication to get SSH client certificates from Vault alt. OpenBao
 author: Andreas Olsson
 
@@ -50,3 +50,7 @@ runs:
         SSH_ROLE: ${{ inputs.ssh_role }}
         VAULT_SERVER: ${{ inputs.vault_server }}
         TMPDIR: ${{ runner.temp }}
+
+branding:
+  icon: terminal
+  color: yellow
