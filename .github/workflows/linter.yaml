@@ -42,7 +42,7 @@ jobs:
         run: .venv/bin/ruff format --target-version py310 --diff vault_oidc_ssh_cert_action.py
 
       - name: Check ruff linting
-        run: .venv/bin/ruff check --target-version py310 vault_oidc_ssh_cert_action.py
+        run: .venv/bin/ruff check --config .github/linting/ruff.toml --target-version py310 vault_oidc_ssh_cert_action.py
 
       - name: Check type hints
         run: .venv/bin/mypy --strict vault_oidc_ssh_cert_action.py

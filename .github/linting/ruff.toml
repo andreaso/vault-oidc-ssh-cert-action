@@ -1,0 +1,31 @@
+[lint]
+select = [
+  # pycodestyle
+  "E", "W",
+  # pyflakes
+  "F",
+  # pep8-naming
+  "N",
+  # pyupgrade
+  "UP",
+  # flake8-annotations
+  "ANN",
+  # flake8-bandit
+  "S",
+  # flake8-bugbear
+  "B",
+  # flake8-builtins
+  "A",
+  # flake8-comprehensions
+  "C4",
+  # flake8-datetimez
+  "DTZ",
+  # flake8-errmsg
+  "EM",
+  # flake8-simplify
+  "SIM",
+  # flake8-unused-arguments
+  "ARG",
+  # Pylint
+  "PL",
+]
