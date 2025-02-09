@@ -36,9 +36,9 @@ def _check_inputs() -> None:
         "vault_server",
     ]
     missing_inputs: list[str] = []
-    for input in required_inputs:
-        if not os.environ.get(input.upper(), "").strip():
-            missing_inputs.append(input)
+    for input_name in required_inputs:
+        if not os.environ.get(input_name.upper(), "").strip():
+            missing_inputs.append(input_name)
 
     if not missing_inputs:
         return
@@ -153,12 +153,21 @@ def _generate_and_sign(
         work_pub_path = os.path.join(workdir, f"{key_fname}.pub")
         work_cert_path = os.path.join(workdir, cert_fname)
 
-        subprocess.run(
-            ["ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", work_key_path],
+        subprocess.run(  # noqa: S603
+            [
+                "/usr/bin/ssh-keygen",
+                "-q",
+                "-t",
+                "ed25519",
+                "-N",
+                "",
+                "-f",
+                work_key_path,
+            ],
             check=True,
         )
 
-        with open(work_pub_path, mode="r", encoding="utf-8") as pubkf:
+        with open(work_pub_path, encoding="utf-8") as pubkf:
             pubkey = pubkf.read()
 
         ssh_cert: str = _issue_ssh_cert(
