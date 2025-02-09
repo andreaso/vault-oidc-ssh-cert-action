@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Bring up server
         run: docker compose -f ".github/integration/${BACKEND}-compose.yaml" up --wait --detach "${BACKEND}-server"
@@ -57,7 +59,9 @@ jobs:
           ssh_role: cert-action-cert
 
       - name: Examine generated certificate
-        run: ssh-keygen -L -f "${{ steps.ssh_cert.outputs.cert_path }}"
+        run: ssh-keygen -L -f "$ssh_cert_path"
+        env:
+          ssh_cert_path: ${{ steps.ssh_cert.outputs.cert_path }}
 
       - name: Run self, with audience conf
         id: ssh_cert_aud
@@ -71,4 +75,6 @@ jobs:
           ssh_role: cert-action-cert
 
       - name: Examine second generated certificate
-        run: ssh-keygen -L -f "${{ steps.ssh_cert_aud.outputs.cert_path }}"
+        run: ssh-keygen -L -f "$ssh_cert_path"
+        env:
+          ssh_cert_path: ${{ steps.ssh_cert_aud.outputs.cert_path }}
