@@ -67,5 +67,10 @@ jobs:
       - name: Lint GitHub Actions workflows
         run: actionlint
 
+      - name: Analyze GitHub Actions
+        run: zizmor .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Markdown lint README
         run: markdownlint --disable MD012 -- README.md
