@@ -64,7 +64,7 @@ jobs:
         run: actionlint
 
       - name: Analyze GitHub Actions
-        run: zizmor .
+        run: zizmor --format=github .
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
