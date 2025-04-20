@@ -1,0 +1,9 @@
+---
+
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        "actions/*": ref-pin
+        "andreaso/*": ref-pin
+        "*": hash-pin
