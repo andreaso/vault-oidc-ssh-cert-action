@@ -43,6 +43,14 @@ happen on the Vault end, given that that is where all the limitations
 can be enforced.
 
 
+## Automated cleanup
+
+All the action's writes are to the `${{ runner.temp }}`
+directory. Hence as soon as the job is completed both the SSH
+certificate and its private key will be automatically removed, even in
+the case of a non-ephemeral runner.
+
+
 ## Corresponding Configuration
 
 ### HashiCorp Vault
