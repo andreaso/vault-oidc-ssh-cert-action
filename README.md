@@ -145,21 +145,5 @@ github-deploy@example.com
 ```
 
 
-## Immutable releases
-
-As of version `v2.0` all further releases are intended to take
-advantage of GitHub's [Immutable releases][3].
-
-To verify that a new version tag is indeed immutable you can either
-check the [Releases][4] page for the `Immutable` marker or you can use
-the GitHub CLI to check the tag's release attestation.
-
-```shell
-gh release verify --repo andreaso/vault-oidc-ssh-cert-action v2.0
-```
-
-
 [1]: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
 [2]: https://openbao.org/
-[3]: https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/immutable-releases
-[4]: https://github.com/andreaso/vault-oidc-ssh-cert-action/releases
