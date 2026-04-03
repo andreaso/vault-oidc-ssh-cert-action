@@ -223,3 +223,7 @@ def run() -> None:
 
     finally:
         _revoke_token(vault_server, vault_token)
+
+
+if __name__ == "__main__":
+    run()

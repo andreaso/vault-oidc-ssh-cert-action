@@ -37,12 +37,10 @@ runs:
   steps:
     - name: Run Action
       id: run_action
-      shell: python
-      run: |
-        import vault_oidc_ssh_cert_action
-        vault_oidc_ssh_cert_action.run()
+      shell: bash
+      run: /usr/bin/python3 vault_oidc_ssh_cert_action.py
+      working-directory: ${{ github.action_path }}
       env:
-        PYTHONPATH: ${{ github.action_path }}
         JWT_AUDIENCE: ${{ inputs.jwt_audience }}
         JWT_OIDC_BACKEND_PATH: ${{ inputs.jwt_oidc_backend_path }}
         JWT_OIDC_ROLE: ${{ inputs.jwt_oidc_role }}
