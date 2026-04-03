@@ -31,10 +31,11 @@ jobs:
       - name: Deploy site
         if: github.ref == 'refs/heads/main'
         run: >
-          rsync -e "ssh -i '$SSH_KEY_PATH'"
+          rsync -e "ssh -o IdentityFile='$SSH_KEY_PATH' -o CertificateFile='$SSH_CERT_PATH'"
           --verbose --recursive --delete-after --perms --chmod=D755,F644
           build/ deployer@site.example.net:/var/www/site/
         env:
+          SSH_CERT_PATH: ${{ steps.ssh_cert.outputs.cert_path }}
           SSH_KEY_PATH: ${{ steps.ssh_cert.outputs.key_path }}
 ```
 
