@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
@@ -53,12 +53,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
       - name: Setup Secondary Linters
-        uses: andreaso/setup-secondary-linters@main
+        uses: andreaso/setup-secondary-linters@537e600c179acebb04008c58de2b20518ff54aa8 # v0.1
 
       - name: Lint GitHub Actions workflows
         run: actionlint
