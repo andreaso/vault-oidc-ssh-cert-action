@@ -2,7 +2,7 @@
 
 name: Linter
 
-on push
+on: push
 
 permissions:
   contents: read
