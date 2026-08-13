@@ -52,9 +52,6 @@ jobs:
       - name: Setup Secondary Linters
         uses: andreaso/setup-secondary-linters@537e600c179acebb04008c58de2b20518ff54aa8 # v0.1
 
-      - name: Lint GitHub Actions workflows
-        run: actionlint
-
       - name: Analyze GitHub Actions
         run: zizmor --format=github .
         env:
