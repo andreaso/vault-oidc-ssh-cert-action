@@ -134,6 +134,12 @@ def _issue_ssh_cert(
         _set_error_message(title, message)
         raise VoscaError(title) from request_error
 
+    print("DEBUG DEBUG DEBUG")
+    print()
+    print(response.text)
+    print()
+    print("DEBUG DEBUG DEBUG")
+
     ssh_cert: str = response.json()["data"]["signed_key"]
     return ssh_cert
 
